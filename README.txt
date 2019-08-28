@@ -22,7 +22,8 @@ C	= 100
 D	= 500
 M	= 1000
 
-stop at 9999
+start at 1
+stop at 3999
 
 
 Example:
