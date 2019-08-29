@@ -114,61 +114,35 @@ def read_dict(roman,count):
   return ("", count) 
 
 
+
 def num_to_roman(num):
-  """
-  Convert any number from 1 to 3999 (included) to its roman writing (string)
-  num: int (0 < num < 4000)
-  result: string
-  """
   if num <= 0:
     raise OutOfBoundaryArgument("input number should be greater than 0")
   if num >= 4000:
     raise OutOfBoundaryArgument("input number should be lesser than 4000")
   res = ""
+  return num_to_roman_rec(num,"")[1]
 
-  # more or equal than 1000
-  if num >= 1000:
-    m = num // 1000
-    res += "M" * m
-    num = num % 1000  
 
-  # more or equal than 100
-  if num >= 100:
-    c = num // 100
-    if c <= 3:
-      res += "C" * c
-    elif c == 4:
-      res += "CD"
-    elif c <= 8:
-      res += "D" + "C" * (c-5)
-    elif c == 9:
-      res += "CM"
-    num = num % 100
-
-  
-  # decimals
-  if num >= 10:
-    d = num // 10
-    if d <= 3:
-      res += "X" * d
-    elif d == 4:
-      res += "XL"
-    elif d <= 8:
-      res += "L" + "X" * (d-5)
-    else:
-      res += "XC"
-    num = num % 10
-
-  # units
-  if num <= 3:
-    res += "I" * num
-  elif num == 4:
-    res == "IV"
-  elif num <= 8:
-    res += "V" + "I" * (num-5)
-  else:
-    res += "IX"
-  return res
+def num_to_roman_rec(num,roman):
+  patterns ={
+    'M': 1000,
+    'CM': 900,
+    'D': 500,
+    'CD': 400,
+    'C': 100,
+    'XC': 90,
+    'L': 50,
+    'XL': 40,
+    'X': 10,
+    'IX': 9,
+    'V': 5,
+    'IV': 4,
+    'I': 1}
+  for p, n in patterns.items():
+    if num // n:
+      return num_to_roman_rec(num-n,roman+p)
+  return (num,roman)
 
 
 def check_valid_charac(roman):
