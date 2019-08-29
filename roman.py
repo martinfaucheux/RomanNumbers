@@ -62,16 +62,16 @@ def num_to_roman(num):
 def roman_to_num(roman):
   return read_dict(roman,0)[1]
 
-def read_dict(roman,count):
-  d2={
+# FAIL to IllegalCharacSequence Check
+def read_dict_V1(roman,count):
+  """ auxiliary function for roman to num """
+  patterns ={
     'CM': 900,
     'CD': 400,
     'XC': 90,
     'XL': 40,
     'IX': 9,
-    'IV': 4
-  }
-  d1 = {
+    'IV': 4,
     'I': 1,
     'V': 5,
     'X': 10,
@@ -80,15 +80,13 @@ def read_dict(roman,count):
     'D': 500,
     'M': 1000
   }
-  r2, r1 = roman[:2], roman[:1]
-  if(r2 in d2):
-    return read_dict(roman[2:],count + d2[r2])
-  elif(r1 in d1):
-    return read_dict(roman[1:],count + d1[r1])
-  elif len(roman)>0:
-    raise IllegalRomanCharac(": "+r1)
-  else:
-    return ("",count)
+  for p, add in patterns.items():
+    if p == roman[:len(p)]:
+      return read_dict(roman[len(p):],count+add)
+  if len(roman)>0:
+    raise IllegalRomanCharac(roman+": "+roman[:1]+" is illegal charac")
+  return ("", count) 
+
 
 
 def roman_to_num_OLD(roman):
