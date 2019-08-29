@@ -1,5 +1,118 @@
 
 
+p_thousand ={
+  'MMM': 3000,
+  'MM': 2000,
+  'M': 1000
+}
+
+p_hundred ={
+  'CM': 900,
+  'DCCC': 800,
+  'DCC': 700,
+  'DC': 600,
+  'CD': 400,
+  'CCC': 300,
+  'CC': 200,
+  'D': 500,
+  'C': 100
+}
+
+p_dec ={
+  'LXXX': 80,
+  'LXX': 70,
+  'LX': 60,
+  'XC': 90,
+  'XL': 40,
+  'XXX': 30,
+  'XX': 20,
+  'L': 50,
+  'X': 10
+}
+
+p_unit ={
+  'IX': 9,
+  'VIII': 8,
+  'VII': 7,
+  'VI': 6,
+  'IV': 4,
+  'III': 3,
+  'II': 2,
+  'V': 5,
+  'I': 1
+}
+
+# This solution work although it is not very elegant
+def roman_to_num(roman):
+  """
+  convert the input roman string to its corresponding arabic writing (as int)
+  raise error if the input string does not correspond to a valid roman number
+  """
+  valid, c = check_valid_charac(roman)
+  if not valid:
+    raise IllegalRomanCharac('"{}": unvalid roman character'.format(c))
+  num = 0
+  roman, c = check_dict(roman,p_thousand)
+  num += c
+  roman, c = check_dict(roman,p_hundred)
+  num += c
+  roman, c = check_dict(roman,p_dec)
+  num += c
+  roman, c = check_dict(roman,p_unit)
+  num += c
+  if(len(roman)>0):
+    raise IllegalCharacSequence(roman+": unvalid roman character sequence")
+  return num
+
+
+def check_dict(roman,patterns):
+  """
+  auxiliary function for roman to num
+  take a roman writing and a dictionnary
+  look over pattern in the dictionnary, if one is met return the corresponding value and crop the roman writing
+  else return 0 (roman unchanged)
+  """
+  for p, value in patterns.items():
+    if p == roman[:len(p)]:
+      return (roman[len(p):],value)
+  return (roman,0)
+
+
+# FAIL to IllegalCharacSequence Check
+def roman_to_num_V1(roman):
+  """
+  convert the input roman string to its corresponding arabic writing (as int)
+  """
+  return read_dict(roman,0)[1]
+
+# auxilary recursive function
+def read_dict(roman,count):
+  """
+  take a roman writing as input
+  look over pattern in the dictionnary, if one is met return the corresponding value and crop the roman writing
+  """
+  patterns ={
+    'CM': 900,
+    'CD': 400,
+    'XC': 90,
+    'XL': 40,
+    'IX': 9,
+    'IV': 4,
+    'I': 1,
+    'V': 5,
+    'X': 10,
+    'L': 50,
+    'C': 100,
+    'D': 500,
+    'M': 1000
+  }
+  for p, add in patterns.items():
+    if p == roman[:len(p)]:
+      return read_dict(roman[len(p):],count+add)
+  if len(roman)>0:
+    raise IllegalRomanCharac(roman+": "+roman[:1]+" is illegal charac")
+  return ("", count) 
+
 
 def num_to_roman(num):
   """
@@ -58,111 +171,6 @@ def num_to_roman(num):
   return res
 
 
-
-def roman_to_num(roman):
-  return read_dict(roman,0)[1]
-
-# FAIL to IllegalCharacSequence Check
-def read_dict_V1(roman,count):
-  """ auxiliary function for roman to num """
-  patterns ={
-    'CM': 900,
-    'CD': 400,
-    'XC': 90,
-    'XL': 40,
-    'IX': 9,
-    'IV': 4,
-    'I': 1,
-    'V': 5,
-    'X': 10,
-    'L': 50,
-    'C': 100,
-    'D': 500,
-    'M': 1000
-  }
-  for p, add in patterns.items():
-    if p == roman[:len(p)]:
-      return read_dict(roman[len(p):],count+add)
-  if len(roman)>0:
-    raise IllegalRomanCharac(roman+": "+roman[:1]+" is illegal charac")
-  return ("", count) 
-
-
-
-def roman_to_num_OLD(roman):
-  """
-  convert any roman writing to arabic writing. Only covers number from 1 to 3999 (included)
-  roman: string representing the roman writing
-  result: int
-  """
-  valid, c = check_valid_charac(roman)
-  if not valid:
-    raise IllegalRomanCharac("{}: {} is an illegal character for roman numbers".format(roman,c))
-  roman_saved = roman
-  res = 0
-
-  if roman[:4] != "MMMM": # exception raised at the end
-    while roman[0] == "M":
-      res += 1000
-      roman = roman[1:]
-
-  if len(roman) == 0: # in case there is no decimal / unit
-    return res
-  elif len(roman) >= 2 and roman[0:2] == "CD":
-    res += 400
-    roman = roman[2:]
-  elif len(roman) >= 2 and roman[0:2] == "CM":
-    res += 900
-    roman = roman[2:]
-  else:
-    if roman[0] == "D":
-      res += 500
-      roman = roman[1:]
-    if roman[:4] != "CCCC": # exception raised at the end
-      while roman[0] == "C":
-        res += 100
-        roman = roman[1:]
-
-  if len(roman) == 0: # in case there is no decimal / unit
-    return res
-  elif len(roman) >= 2 and roman[0:2] == "XL":
-    res += 40
-    roman = roman[2:]
-  elif len(roman) >= 2 and roman[0:2] == "XC":
-    res += 90
-    roman = roman[2:]
-  else:
-    if roman[0] == "L":
-      res += 50
-      roman = roman[1:]
-    if roman[:4] != "XXXX": # exception raised at the end
-      while len(roman) > 0 and roman[0] == "X":
-        res += 10
-        roman = roman[1:]
-
-  if len(roman) == 0: # in case there is no unit
-    pass
-  elif len(roman) == 2 and roman[:2] == "IV":
-    res += 4
-    roman = roman[2:]
-  elif len(roman) == 2 and roman[:2] == "IX":
-    res += 9
-    roman = roman[2:]
-  else:
-    if roman[0] == "V":
-      res += 5
-      roman = roman[1:]
-    if roman[:4] != "IIII": # exception raised at the end
-      while len(roman) > 0 and roman[0] == "I":
-        res += 1
-        roman = roman[1:]
-
-  if(len(roman) > 0):
-    msg = "Illegal character '{}' in {}".format(roman[0],roman_saved)
-    raise IllegalCharacSequence(msg)
-  return res
-
-
 def check_valid_charac(roman):
   """ 
   check if the input roman number contains illegal characters
@@ -171,6 +179,8 @@ def check_valid_charac(roman):
         bool: True if the given roman string does not contain illegal character
         c: illegal character, None if there is none
   """
+  if len(roman) == 0:
+    return (False,"")
   legal = "IVXLCDM"
   for c in roman:
     if not (c in legal):
