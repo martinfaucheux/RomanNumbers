@@ -70,6 +70,7 @@ class RomanTests(unittest.TestCase):
     with self.assertRaises(IllegalRomanCharac):
       a = roman_to_num('B')
       b = roman_to_num('G')
+      c = roman_to_num('')
   
   def test_illegal_sequence(self):
     with self.assertRaises(IllegalCharacSequence):
@@ -83,7 +84,7 @@ class RomanTests(unittest.TestCase):
     with self.assertRaises(IllegalCharacSequence):
       d = roman_to_num('XXXX')
     with self.assertRaises(IllegalCharacSequence):
-      d = roman_to_num('VV')
+      d = roman_to_num('LL')
     with self.assertRaises(IllegalCharacSequence):
       d = roman_to_num('IIIM')
 
