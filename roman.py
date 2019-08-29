@@ -1,4 +1,5 @@
 
+# conversion tables
 
 p_thousand ={
   'MMM': 3000,
@@ -42,6 +43,21 @@ p_unit ={
   'I': 1
 }
 
+p_general ={
+    'M': 1000,
+    'CM': 900,
+    'D': 500,
+    'CD': 400,
+    'C': 100,
+    'XC': 90,
+    'L': 50,
+    'XL': 40,
+    'X': 10,
+    'IX': 9,
+    'V': 5,
+    'IV': 4,
+    'I': 1}
+
 # This solution work although it is not very elegant
 def roman_to_num(roman):
   """
@@ -51,15 +67,11 @@ def roman_to_num(roman):
   valid, c = check_valid_charac(roman)
   if not valid:
     raise IllegalRomanCharac('"{}": unvalid roman character'.format(c))
+  patterns = [p_thousand,p_hundred,p_dec,p_unit]
   num = 0
-  roman, c = check_dict(roman,p_thousand)
-  num += c
-  roman, c = check_dict(roman,p_hundred)
-  num += c
-  roman, c = check_dict(roman,p_dec)
-  num += c
-  roman, c = check_dict(roman,p_unit)
-  num += c
+  for p in patterns:
+    roman, c = check_dict(roman,p)
+    num += c
   if(len(roman)>0):
     raise IllegalCharacSequence(roman+": unvalid roman character sequence")
   return num
@@ -91,22 +103,7 @@ def read_dict(roman,count):
   take a roman writing as input
   look over pattern in the dictionnary, if one is met return the corresponding value and crop the roman writing
   """
-  patterns ={
-    'CM': 900,
-    'CD': 400,
-    'XC': 90,
-    'XL': 40,
-    'IX': 9,
-    'IV': 4,
-    'I': 1,
-    'V': 5,
-    'X': 10,
-    'L': 50,
-    'C': 100,
-    'D': 500,
-    'M': 1000
-  }
-  for p, add in patterns.items():
+  for p, add in p_general.items():
     if p == roman[:len(p)]:
       return read_dict(roman[len(p):],count+add)
   if len(roman)>0:
@@ -123,23 +120,8 @@ def num_to_roman(num):
   res = ""
   return num_to_roman_rec(num,"")[1]
 
-
 def num_to_roman_rec(num,roman):
-  patterns ={
-    'M': 1000,
-    'CM': 900,
-    'D': 500,
-    'CD': 400,
-    'C': 100,
-    'XC': 90,
-    'L': 50,
-    'XL': 40,
-    'X': 10,
-    'IX': 9,
-    'V': 5,
-    'IV': 4,
-    'I': 1}
-  for p, n in patterns.items():
+  for p, n in p_general.items():
     if num // n:
       return num_to_roman_rec(num-n,roman+p)
   return (num,roman)
