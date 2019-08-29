@@ -57,7 +57,41 @@ def num_to_roman(num):
     res += "IX"
   return res
 
+
+
 def roman_to_num(roman):
+  return read_dict(roman,0)[1]
+
+def read_dict(roman,count):
+  d2={
+    'CM': 900,
+    'CD': 400,
+    'XC': 90,
+    'XL': 40,
+    'IX': 9,
+    'IV': 4
+  }
+  d1 = {
+    'I': 1,
+    'V': 5,
+    'X': 10,
+    'L': 50,
+    'C': 100,
+    'D': 500,
+    'M': 1000
+  }
+  r2, r1 = roman[:2], roman[:1]
+  if(r2 in d2):
+    return read_dict(roman[2:],count + d2[r2])
+  elif(r1 in d1):
+    return read_dict(roman[1:],count + d1[r1])
+  elif len(roman)>0:
+    raise IllegalRomanCharac(": "+r1)
+  else:
+    return ("",count)
+
+
+def roman_to_num_OLD(roman):
   """
   convert any roman writing to arabic writing. Only covers number from 1 to 3999 (included)
   roman: string representing the roman writing
@@ -69,13 +103,11 @@ def roman_to_num(roman):
   roman_saved = roman
   res = 0
 
-  # deal with < 1000
   if roman[:4] != "MMMM": # exception raised at the end
     while roman[0] == "M":
       res += 1000
       roman = roman[1:]
 
-  # deal with < 1000
   if len(roman) == 0: # in case there is no decimal / unit
     return res
   elif len(roman) >= 2 and roman[0:2] == "CD":
@@ -93,7 +125,6 @@ def roman_to_num(roman):
         res += 100
         roman = roman[1:]
 
-  # deal with < 100
   if len(roman) == 0: # in case there is no decimal / unit
     return res
   elif len(roman) >= 2 and roman[0:2] == "XL":
@@ -111,7 +142,6 @@ def roman_to_num(roman):
         res += 10
         roman = roman[1:]
 
-  # deal with < 10
   if len(roman) == 0: # in case there is no unit
     pass
   elif len(roman) == 2 and roman[:2] == "IV":
